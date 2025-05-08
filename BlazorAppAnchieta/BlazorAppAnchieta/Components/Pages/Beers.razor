@@ -1,0 +1,36 @@
+@page "/beers"
+@inject HttpClient Client
+@attribute [StreamRendering]
+
+<h1>Beers</h1>
+
+@if (beers.Count == 0)
+{
+    <h2>Loading...</h2>
+}
+else
+{
+    foreach (Beer beer in beers)
+    {
+        <h2>@beer.Name - @beer.Id</h2>
+        <img src="@beer.Image" alt="@beer.Name" style="width: 100px; height: 100px;" />
+        <hr />
+    }
+}
+
+@code
+{
+    protected async override Task OnInitializedAsync()
+    {
+        beers = await Client.GetFromJsonAsync<List<Beer>>("https://api.sampleapis.com/beers/ale");
+    }
+
+    public class Beer
+    {
+        public object Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+    }
+
+    private List<Beer> beers = new List<Beer>();
+}
